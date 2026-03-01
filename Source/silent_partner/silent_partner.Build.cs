@@ -7,8 +7,17 @@ public class silent_partner : ModuleRules
 	public silent_partner(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
-	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput" });
+
+		PublicDependencyModuleNames.AddRange(new string[] 
+		{ 
+			"Core", 
+			"CoreUObject", 
+			"Engine", 
+			"InputCore", 
+			"EnhancedInput", 
+			"GameplayTags"
+		});
+
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
