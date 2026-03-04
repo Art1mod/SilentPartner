@@ -5,6 +5,21 @@
 #include "Engine/DataAsset.h"
 #include "GameDialogueTypes.generated.h"
 
+
+UCLASS(Abstract, Blueprintable, EditInlineNew, DefaultToInstanced)
+class SILENT_PARTNER_API UDialogueAction: public UObject
+{
+    GENERATED_BODY()
+
+public:
+    // Logic to execute (QTE, End Dialogue, Give Item, etc)
+    UFUNCTION(BlueprintNativeEvent, Category = "Dialogue")
+    void ExecuteAction(class UDialogueManagerComponent* Manager);
+    virtual void ExecuteAction_Implementation(class UDialogueManagerComponent* Manager) {}
+
+};
+
+
 //This is a helper structure inside your Data Asset. It represents a single "button" the player can press.
 USTRUCT(BlueprintType)
 struct FDialogueChoice
@@ -23,10 +38,14 @@ struct FDialogueChoice
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FGameplayTag UnlockRequirement; 
 
-    // Tactical impact: How much this choice affects Ben's stress
+    
+    //The writer can add "End Dialogue", "Start QTE", etc. here
+    UPROPERTY(EditAnywhere, Instanced, Category = "Actions")
+    TArray<TObjectPtr<UDialogueAction>> OnSelectedActions;
+
+	// Tactical impact: How much this choice affects Ben's stress
     //UPROPERTY(EditAnywhere, BlueprintReadWrite)
     //float StressModifier = 0.0f;
-	
 };
 
 //Think of each Node as a single "page" in a script.
@@ -56,6 +75,9 @@ public:
     // The node to trigger if the timer runs out 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Logic")
     TSoftObjectPtr<UDialogueNode> DefaultTimeoutNode;
+
+    UPROPERTY(EditAnywhere, Instanced, Category = "Actions")
+    TArray<TObjectPtr<UDialogueAction>> OnTimeoutActions;
 };
 
 

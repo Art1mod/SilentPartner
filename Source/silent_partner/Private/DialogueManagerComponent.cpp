@@ -50,12 +50,36 @@ void UDialogueManagerComponent::OnChoiceSelected(int32 ChoiceIndex)
 {
 	GetWorld()->GetTimerManager().ClearTimer(TimerHandle_Dialogue);
 
-	if (AvailableChoices.IsValidIndex(ChoiceIndex))
+	if (!AvailableChoices.IsValidIndex(ChoiceIndex)) return;
+
+	const FDialogueChoice& SelectedChoice = AvailableChoices[ChoiceIndex];
+
+	for (UDialogueAction* Action : SelectedChoice.OnSelectedActions) 
+	{
+		if (Action) 
+		{
+			Action->ExecuteAction(this);
+		}
+	}
+	
+	if (!SelectedChoice.NextNode.IsNull()) 
 	{
 		// Load and move to the next part of the story
-		UDialogueNode* NextNode = AvailableChoices[ChoiceIndex].NextNode.LoadSynchronous();
-		StartDialogue(NextNode);
+		StartDialogue(SelectedChoice.NextNode.LoadSynchronous());
 	}
+	
+	// If NextNode is null and an "End" action was fired, the dialogue simply stops
+}
+
+void UDialogueManagerComponent::EndDialogue()
+{
+	CurrentNode = nullptr;
+	AvailableChoices.Empty();
+	GetWorld()->GetTimerManager().ClearTimer(TimerHandle_Dialogue);
+	
+	// Broadcast to UI to hide itself 
+	OnDialogueFinished.Broadcast();
+
 }
 
 void UDialogueManagerComponent::OnTimerExpired()
