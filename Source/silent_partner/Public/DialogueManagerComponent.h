@@ -9,6 +9,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnDialogueUpdated, UDialogueNode*, CurrentNode, const TArray<FDialogueChoice>&, VisibleChoices);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDialogueFinished);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnQTETriggered, FName, Input, float, Duration);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SILENT_PARTNER_API UDialogueManagerComponent : public UActorComponent
@@ -31,6 +32,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void EndDialogue();
 
+	// Call this to start a QTE sequence 
+	UFUNCTION(BlueprintCallable)
+	void TriggerQTE(FName Input, float Duration);
+
 	// This stores all tags/clues the player has found so far
 	UPROPERTY(BlueprintReadWrite, Category = "State")
 	FGameplayTagContainer FoundClues;
@@ -42,6 +47,9 @@ public:
 	// Bind your UI to notify that the dialogue is finished 
 	UPROPERTY(BlueprintAssignable, Category = "Dialogue|Events")
 	FOnDialogueFinished OnDialogueFinished;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnQTETriggered OnQTETriggered;
 
 protected:
 	// Called when the game starts

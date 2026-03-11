@@ -2,6 +2,8 @@
 
 
 #include "DialogueManagerComponent.h"
+#include "silent_partner/DialogueDataRow.h"
+
 #include "TimerManager.h"
 
 
@@ -22,9 +24,22 @@ void UDialogueManagerComponent::StartDialogue(UDialogueNode* NewNode)
 
 	CurrentNode = NewNode;
 	
+	// 1. Fetch the Text from the Data Table Row Handle
+	FText DisplayText;
+	if (const FDialogueDataRow* Row = CurrentNode->DialogueRow.GetRow<FDialogueDataRow>(TEXT("DialogueContext")))
+	{
+		DisplayText = Row->DialogueText;
+	}
+	else
+	{
+		DisplayText = FText::FromString("Error: Row Not Found");
+	}
+
+
+
 	AvailableChoices.Empty();
 
-	// 1. Filter choices: Only show what the player "knows"
+	// 2. Filter choices: Only show what the player "knows"
 	for (const FDialogueChoice& Choice: CurrentNode->Choices) 
 	{
 		if (!Choice.UnlockRequirement.IsValid() || FoundClues.HasTag(Choice.UnlockRequirement))
@@ -33,7 +48,7 @@ void UDialogueManagerComponent::StartDialogue(UDialogueNode* NewNode)
 		}
 	}
 
-	// 2. Start the timer
+	// 3. Start the timer
 	GetWorld()->GetTimerManager().SetTimer(
 		TimerHandle_Dialogue,
 		this,
@@ -42,7 +57,7 @@ void UDialogueManagerComponent::StartDialogue(UDialogueNode* NewNode)
 		false
 	);
 
-	// 3. Tell the UI to display the new text and buttons
+	// 4. Tell the UI to display the new text and buttons
 	OnDialogueUpdated.Broadcast(CurrentNode, AvailableChoices);
 }
 
@@ -90,6 +105,11 @@ void UDialogueManagerComponent::OnTimerExpired()
 		UDialogueNode* DefaultTimeoutNode = CurrentNode->DefaultTimeoutNode.LoadSynchronous();
 		StartDialogue(DefaultTimeoutNode);
 	}
+}
+
+void UDialogueManagerComponent::TriggerQTE(FName Input, float Duration)
+{
+	OnQTETriggered.Broadcast(Input, Duration);
 }
 
 

@@ -3,9 +3,10 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "Engine/DataAsset.h"
+#include "silent_partner/DialogueDataRow.h"
 #include "GameDialogueTypes.generated.h"
 
-
+//Base class for Dialogue Actions 
 UCLASS(Abstract, Blueprintable, EditInlineNew, DefaultToInstanced)
 class SILENT_PARTNER_API UDialogueAction: public UObject
 {
@@ -56,9 +57,9 @@ class UDialogueNode : public UPrimaryDataAsset
 
 public:
     
-    // What the NPC says (The subtitle text)
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Content")
-    FText NPCLine;
+    // This makes the writing "Code-Change-Proof."
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Writing")
+    FDataTableRowHandle DialogueRow;
 
     // What the NPC says (a voice line)
     //UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Content")
@@ -78,6 +79,10 @@ public:
 
     UPROPERTY(EditAnywhere, Instanced, Category = "Actions")
     TArray<TObjectPtr<UDialogueAction>> OnTimeoutActions;
+
+public: 
+    UFUNCTION(BlueprintCallable, Category = "Dialogue")
+    FText GetNodeText() const;
 };
 
 

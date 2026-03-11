@@ -24,14 +24,16 @@ class UAction_StartQTE : public UDialogueAction
     GENERATED_BODY()
 
 public:
+    
+    UPROPERTY(EditAnywhere, Category = "QTE")
+    FName RequiredInput;
 
-    UPROPERTY(EditAnywhere)
-    FName QTE_ID; // The ID for QTE system to look up
-
+    UPROPERTY(EditAnywhere, Category = "QTE")
+    float TimeLimit = 1.5f;
 
     virtual void ExecuteAction_Implementation(UDialogueManagerComponent* Manager) override
     {
-        // Logic to trigger via manager or global system
+        if (Manager) Manager->TriggerQTE(RequiredInput, TimeLimit);
     }
 };
 
