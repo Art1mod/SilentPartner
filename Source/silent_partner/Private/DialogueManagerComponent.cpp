@@ -2,7 +2,7 @@
 
 
 #include "DialogueManagerComponent.h"
-#include "silent_partner/DialogueDataRow.h"
+#include "silent_partner/Public/DialogueDataRow.h"
 
 #include "TimerManager.h"
 

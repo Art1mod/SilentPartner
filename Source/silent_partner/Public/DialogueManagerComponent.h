@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "silent_partner/GameDialogueTypes.h"
+#include "silent_partner/Public/GameDialogueTypes.h"
 #include "DialogueManagerComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnDialogueUpdated, UDialogueNode*, CurrentNode, const TArray<FDialogueChoice>&, VisibleChoices);

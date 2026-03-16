@@ -3,7 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "Engine/DataAsset.h"
-#include "silent_partner/DialogueDataRow.h"
+#include "silent_partner/Public/DialogueDataRow.h"
 #include "GameDialogueTypes.generated.h"
 
 //Base class for Dialogue Actions 
