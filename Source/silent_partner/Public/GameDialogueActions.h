@@ -4,6 +4,28 @@
 #include "silent_partner/Public/GameDialogueTypes.h"
 #include "GameDialogueActions.generated.h"
 
+// START DIALOGUE
+UCLASS()
+class UAction_StartDialogue : public UDialogueAction
+{
+    GENERATED_BODY()
+
+public:
+
+    /** The specific dialogue tree to begin when this action fires */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue")
+    TSoftObjectPtr<class UDialogueNode> DialogueToStart;
+
+    virtual void ExecuteAction_Implementation(UDialogueManagerComponent* Manager) override
+    {
+        if (Manager && !DialogueToStart.IsNull())
+        {
+            UDialogueNode* Node = DialogueToStart.Get() ? DialogueToStart.Get() : DialogueToStart.LoadSynchronous();
+            if (Node) Manager->StartDialogue(Node);
+        }
+    }
+};
+
 // END DIALOGUE
 UCLASS()
 class UAction_EndDialogue : public UDialogueAction
