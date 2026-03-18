@@ -10,6 +10,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnDialogueUpdated, UDialogueNode*, CurrentNode, const TArray<FDialogueChoice>&, VisibleChoices);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDialogueFinished);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnQTETriggered, FName, Input, float, Duration);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDialogueVisibilityChanged, bool, bIsVisible);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SILENT_PARTNER_API UDialogueManagerComponent : public UActorComponent
@@ -47,6 +48,9 @@ public:
 	// Bind your UI to notify that the dialogue is finished 
 	UPROPERTY(BlueprintAssignable, Category = "Dialogue|Events")
 	FOnDialogueFinished OnDialogueFinished;
+
+	UPROPERTY(BlueprintAssignable, Category = "Dialogue")
+	FOnDialogueVisibilityChanged OnDialogueVisibilityChanged;
 
 	UPROPERTY(BlueprintAssignable)
 	FOnQTETriggered OnQTETriggered;

@@ -58,6 +58,7 @@ void UDialogueManagerComponent::StartDialogue(UDialogueNode* NewNode)
 	);
 
 	// 4. Tell the UI to display the new text and buttons
+	OnDialogueVisibilityChanged.Broadcast(true);
 	OnDialogueUpdated.Broadcast(CurrentNode, AvailableChoices);
 }
 
@@ -93,6 +94,7 @@ void UDialogueManagerComponent::EndDialogue()
 	GetWorld()->GetTimerManager().ClearTimer(TimerHandle_Dialogue);
 	
 	// Broadcast to UI to hide itself 
+	OnDialogueVisibilityChanged.Broadcast(false);
 	OnDialogueFinished.Broadcast();
 
 }

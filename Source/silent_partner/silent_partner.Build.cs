@@ -13,8 +13,11 @@ public class silent_partner : ModuleRules
 			"Core", 
 			"CoreUObject", 
 			"Engine", 
-			"InputCore", 
-			"EnhancedInput", 
+			"InputCore",
+            "UMG", 
+			"Slate", 
+			"SlateCore",
+            "EnhancedInput", 
 			"GameplayTags"
 		});
 
