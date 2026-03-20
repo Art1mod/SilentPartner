@@ -19,15 +19,16 @@ public:
 	// This is the C++ side of the BlueprintNativeEvent
 	virtual UDialogueManagerComponent* GetDialogueManager_Implementation() override;
 
-	// --- COMPONENTS ---
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Dialogue", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UDialogueManagerComponent> DialogueManager;
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+private:	
+
+	// --- COMPONENTS ---
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Dialogue", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UDialogueManagerComponent> DialogueManager;
+
 
 
 };

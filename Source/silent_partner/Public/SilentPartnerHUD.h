@@ -26,9 +26,13 @@ private:
     UPROPERTY()
     TObjectPtr<class UDialogueWidgetBase> DialogueWidgetInstance;
 
-    // The function that reacts to the delegate
+    // The function that reacts to the delegate and toggles visibility of the dialogue widget
     UFUNCTION()
     void HandleVisibilityChange(bool bIsVisible);
+
+    // The function that reacts to a player chosing a dialogue option
+    UFUNCTION()
+    void HandleOnChoiceSelected(int32 ChoiceID);
     
     UFUNCTION()
     void RefreshDialogueUI(UDialogueNode* CurrentNode, const TArray<FDialogueChoice>& VisibleChoices);

@@ -22,16 +22,20 @@ public:
 	UDialogueManagerComponent();
 
 	// Call this to start a conversation (e.g., when the player enters a room)
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Dialogue")
 	void StartDialogue(UDialogueNode* NewNode);
 
 	// Call this when the player clicks a button in your UI
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Dialogue")
 	void OnChoiceSelected(int32 ChoiceIndex);
 
-	// Call this to end a conversation (e.g.,)
-	UFUNCTION(BlueprintCallable)
+	// Call this to end a conversation
+	UFUNCTION(BlueprintCallable, Category = "Dialogue")
 	void EndDialogue();
+
+	// Call this to end a conversation with a delay
+	UFUNCTION(BlueprintCallable, Category = "Dialogue")
+	void EndDialogueWithDelay(float Delay);
 
 	// Call this to start a QTE sequence 
 	UFUNCTION(BlueprintCallable)
@@ -69,6 +73,14 @@ private:
 
 	FTimerHandle TimerHandle_Dialogue;
 
+	FTimerHandle TimerHandle_EndDialogueWithDelay;
+
 	void OnTimerExpired();
-		
+
+	void OnDelayedEndTriggered();
+
+public:
+	// Checks if the player has discovered a specific clue/tag 
+	UFUNCTION(BlueprintCallable, Category = "Dialogue|Clues")
+	bool HasClue(FGameplayTag ClueTag) const;
 };

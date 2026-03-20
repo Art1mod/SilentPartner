@@ -33,9 +33,23 @@ class UAction_EndDialogue : public UDialogueAction
     GENERATED_BODY()
 
 public:
+
+    // If 0, it ends instantly. If > 0, it waits.
+    UPROPERTY(EditAnywhere, Category = "Dialogue", meta = (ClampMin = "0.0"))
+    float Delay = 0.0f;
+
     virtual void ExecuteAction_Implementation(UDialogueManagerComponent* Manager) override
     {
-        Manager->EndDialogue();
+        if (!Manager) return;
+
+        if (Delay <= 0.0f)
+        {
+            Manager->EndDialogue();
+        }
+        else
+        {
+            Manager->EndDialogueWithDelay(Delay);
+        }
     }
 };
 
@@ -73,9 +87,16 @@ public:
     {
         if (Manager)
         {
-            Manager->FoundClues.AddTag(ClueToGrant);
-            // TODO: Broadcast a notification to the HUD
-            UE_LOG(LogTemp, Log, TEXT("Added Clue: %s"), *ClueToGrant.ToString());
+            if (!Manager->HasClue(ClueToGrant))
+            {
+                Manager->FoundClues.AddTag(ClueToGrant);
+                // TODO: Broadcast a notification to the HUD
+                UE_LOG(LogTemp, Log, TEXT("Added Clue: %s"), *ClueToGrant.ToString());
+            }
+            else 
+            {
+                UE_LOG(LogTemp, Log, TEXT("Already has a clue: %s"), *ClueToGrant.ToString());
+            }
         }
     }
 };

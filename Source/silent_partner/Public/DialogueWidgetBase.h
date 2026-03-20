@@ -6,6 +6,8 @@
 #include "Blueprint/UserWidget.h"
 #include "DialogueWidgetBase.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChoiceSelected, int32, ChoiceID);
+
 /**
  * 
  */
@@ -22,6 +24,10 @@ public:
     // Should match Blueprints variable name
     UPROPERTY(meta = (BindWidget))
     class UVerticalBox* ChoiceContainer;
+
+    // A delegate to notify of selected choice
+    UPROPERTY(BlueprintCallable, Category = "Dialogue|Events")
+    FOnChoiceSelected OnChoiceSelected;
 
     // A Blueprint event to trigger animations (Fade in/out)
     UFUNCTION(BlueprintImplementableEvent, Category = "UI")

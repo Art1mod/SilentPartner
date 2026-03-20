@@ -41,6 +41,7 @@ void AInteractableActor::BeginPlay()
     if (CollisionComponent)
     {
         CollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &AInteractableActor::OnOverlapBegin);
+        CollisionComponent->OnComponentEndOverlap.AddDynamic(this, &AInteractableActor::OnOverlapEnd);
     }
 }
 
@@ -73,6 +74,19 @@ void AInteractableActor::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AAc
         {
             UE_LOG(LogTemp, Log, TEXT("Overlap Success: %s found Manager on %s"), *GetName(), *OtherActor->GetName());
             Interact(Manager);
+        }
+    }
+}
+
+void AInteractableActor::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+    // Check if the actor leaving the zone is the Interacter (Player). If so, end a dialogue
+    if (OtherActor && OtherActor->Implements<USilentPartnerInteracter>())
+    {
+        if (UDialogueManagerComponent* Manager = ISilentPartnerInteracter::Execute_GetDialogueManager(OtherActor))
+        {
+            UE_LOG(LogTemp, Log, TEXT("Overlap End: %s signaling EndDialogue for %s"), *GetName(), *OtherActor->GetName());
+            Manager->EndDialogue();
         }
     }
 }

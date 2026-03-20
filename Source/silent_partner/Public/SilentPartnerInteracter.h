@@ -23,6 +23,6 @@ class SILENT_PARTNER_API ISilentPartnerInteracter
 public:
 
 	// This function allows the object to "Ask" the player for the manager
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
+	UFUNCTION(BlueprintNativeEvent, Category = "Interaction")
 	class UDialogueManagerComponent* GetDialogueManager();
 };

@@ -99,6 +99,34 @@ void UDialogueManagerComponent::EndDialogue()
 
 }
 
+void UDialogueManagerComponent::EndDialogueWithDelay(float Delay)
+{
+	// Start the timer
+	GetWorld()->GetTimerManager().SetTimer(
+		TimerHandle_EndDialogueWithDelay,
+		this,
+		&UDialogueManagerComponent::OnDelayedEndTriggered,
+		Delay,
+		false
+	);
+}
+
+void UDialogueManagerComponent::OnDelayedEndTriggered()
+{
+	EndDialogue();
+}
+
+bool UDialogueManagerComponent::HasClue(FGameplayTag ClueTag) const
+{
+	// Safety check: if the tag isn't valid, we definitely don't have it
+	if (!ClueTag.IsValid())
+	{
+		return false;
+	}
+
+	return FoundClues.HasTag(ClueTag);
+}
+
 void UDialogueManagerComponent::OnTimerExpired()
 {
 	if (CurrentNode && CurrentNode->DefaultTimeoutNode.IsValid()) 

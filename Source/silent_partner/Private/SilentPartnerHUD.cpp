@@ -21,6 +21,8 @@ void ASilentPartnerHUD::BeginPlay()
         {
             DialogueWidgetInstance->AddToViewport();
             DialogueWidgetInstance->SetVisibility(ESlateVisibility::Collapsed);
+
+            DialogueWidgetInstance->OnChoiceSelected.AddDynamic(this, &ASilentPartnerHUD::HandleOnChoiceSelected);
         }
     }
 
@@ -36,7 +38,7 @@ void ASilentPartnerHUD::BeginPlay()
         {
             Manager->OnDialogueVisibilityChanged.AddDynamic(this, &ASilentPartnerHUD::HandleVisibilityChange);
 
-            // Pro-tip: Also bind to the data update so the HUD can refresh the text!
+            // Binds  the data update the text in the text block of the dialogue widget!
             Manager->OnDialogueUpdated.AddDynamic(this, &ASilentPartnerHUD::RefreshDialogueUI);
         }
     }
@@ -74,6 +76,23 @@ void ASilentPartnerHUD::HandleVisibilityChange(bool bIsVisible)
 
         // Give focus back to the game world
         FSlateApplication::Get().SetAllUserFocusToGameViewport();
+    }
+}
+
+void ASilentPartnerHUD::HandleOnChoiceSelected(int32 ChoiceID)
+{
+    APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+
+    // Check if the Pawn implements the interface
+    if (PlayerPawn && PlayerPawn->GetClass()->ImplementsInterface(USilentPartnerInteracter::StaticClass()))
+    {
+        // Execute the interface function to get the manager
+        UDialogueManagerComponent* Manager = ISilentPartnerInteracter::Execute_GetDialogueManager(PlayerPawn);
+
+        if (Manager)
+        {
+            Manager->OnChoiceSelected(ChoiceID);
+        }
     }
 }
 
