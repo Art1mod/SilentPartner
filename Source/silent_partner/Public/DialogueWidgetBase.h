@@ -36,5 +36,25 @@ public:
     // This event will be implemented in WBP_DialogueUI
     UFUNCTION(BlueprintImplementableEvent, Category = "UI")
     void AddChoiceButtonToWidget(int32 ChoiceIndex, const FText& ButtonText);
-	
+
+    UFUNCTION(Category = "UI")
+    void UpdateChoices(const TArray<FDialogueChoice>& Choices);
+
+protected:
+    UPROPERTY(EditAnywhere, Category = "Dialogue")
+    TSubclassOf<class UDialogueButtonBase> ChoiceButtonClass;
+
+    UPROPERTY(EditAnywhere, Category = "Dialogue|Setup")
+    int32 PoolChunkSize = 4;
+
+private:
+    // The actual "Pool" of widgets
+    UPROPERTY()
+    TArray<TObjectPtr<UDialogueButtonBase>> ButtonPool;
+
+    // Helper to grow the pool in chunks
+    void ExpandPool(int32 NewSize);
+
+    // The handler that catches the native button click
+    void HandlePooledButtonClicked(int32 ChoiceID);
 };

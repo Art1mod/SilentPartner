@@ -107,14 +107,6 @@ void ASilentPartnerHUD::RefreshDialogueUI(UDialogueNode* CurrentNode, const TArr
         DialogueWidgetInstance->DialogueText->SetText(CurrentNode->GetNodeText());
     }
 
-    // 2. Refresh Choices (Buttons)
-    if (DialogueWidgetInstance->ChoiceContainer)
-    {
-        DialogueWidgetInstance->ChoiceContainer->ClearChildren();
-
-        for (int32 i = 0; i < VisibleChoices.Num(); ++i)
-        {
-            DialogueWidgetInstance->AddChoiceButtonToWidget(i, VisibleChoices[i].ChoiceLabel);
-        }
-    }
+    // 2. Update choices using the pool
+    DialogueWidgetInstance->UpdateChoices(VisibleChoices);
 }

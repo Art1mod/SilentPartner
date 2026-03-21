@@ -36,9 +36,4 @@ private:
     
     UFUNCTION()
     void RefreshDialogueUI(UDialogueNode* CurrentNode, const TArray<FDialogueChoice>& VisibleChoices);
-
-public:
-
-    UFUNCTION(BlueprintCallable, Category = "UI")
-    FORCEINLINE class UDialogueWidgetBase* GetDialogueWidget() const { return DialogueWidgetInstance; }
 };
