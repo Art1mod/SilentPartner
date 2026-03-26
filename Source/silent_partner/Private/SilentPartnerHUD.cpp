@@ -40,6 +40,8 @@ void ASilentPartnerHUD::BeginPlay()
 
             // Binds  the data update the text in the text block of the dialogue widget!
             Manager->OnDialogueUpdated.AddDynamic(this, &ASilentPartnerHUD::RefreshDialogueUI);
+            Manager->OnDialogueTimerStarted.AddDynamic(this, &ASilentPartnerHUD::HandleTimerStarted);
+            Manager->OnDialogueTimerFinished.AddDynamic(this, &ASilentPartnerHUD::HandleTimerFinished);
         }
     }
 
@@ -109,4 +111,22 @@ void ASilentPartnerHUD::RefreshDialogueUI(UDialogueNode* CurrentNode, const TArr
 
     // 2. Update choices using the pool
     DialogueWidgetInstance->UpdateChoices(VisibleChoices);
+}
+
+void ASilentPartnerHUD::HandleTimerStarted(float Duration)
+{
+    if (DialogueWidgetInstance)
+    {
+        // Route the message to the widget
+        DialogueWidgetInstance->StartVisualTimer(Duration);
+    }
+}
+
+void ASilentPartnerHUD::HandleTimerFinished()
+{
+    if (DialogueWidgetInstance)
+    {
+        // Tell the widget to stop its Tick logic
+        DialogueWidgetInstance->StopVisualTimer();
+    }
 }

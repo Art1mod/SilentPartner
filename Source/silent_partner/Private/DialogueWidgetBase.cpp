@@ -4,7 +4,7 @@
 #include "DialogueWidgetBase.h"
 #include "Components/TextBlock.h"
 #include "Components/VerticalBox.h"
-//#include "Blueprint/UserWidget.h"
+#include "Components/ProgressBar.h"
 #include "silent_partner/Public/DialogueButtonBase.h"
 #include "silent_partner/Public/GameDialogueTypes.h"
 
@@ -38,6 +38,61 @@ void UDialogueWidgetBase::UpdateChoices(const TArray<FDialogueChoice>& Choices)
         {
             Button->SetVisibility(ESlateVisibility::Collapsed);
         }
+    }
+}
+
+void UDialogueWidgetBase::StartVisualTimer(float Duration)
+{
+    if (!ChoiceTimerBar) return;
+
+    TotalTimerDuration = Duration;
+    ElapsedTimerTime = 0.0f;
+    bIsTimerActive = (Duration > 0.0f);
+
+    ChoiceTimerBar->SetVisibility(bIsTimerActive ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
+}
+
+void UDialogueWidgetBase::StopVisualTimer()
+{
+    bIsTimerActive = false;
+    ElapsedTimerTime = 0.0f;
+
+    if (ChoiceTimerBar)
+    {
+        //Hide the bar 
+        ChoiceTimerBar->SetVisibility(ESlateVisibility::Collapsed);
+
+        // Reset colors/opacity so it's fresh for the next timer
+        ChoiceTimerBar->SetFillColorAndOpacity(FLinearColor::White);
+        ChoiceTimerBar->SetRenderOpacity(1.0f);
+    }
+}
+
+void UDialogueWidgetBase::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+    if (bIsTimerActive && ChoiceTimerBar)
+    {
+        ElapsedTimerTime += InDeltaTime;
+        float Percent = FMath::Clamp(1.0f - (ElapsedTimerTime / TotalTimerDuration), 0.0f, 1.0f);
+
+        ChoiceTimerBar->SetPercent(Percent);
+
+        // If less than 25% time remains, turn the bar Red and maybe make it pulse
+        if (Percent < 0.25f)
+        {
+            ChoiceTimerBar->SetFillColorAndOpacity(FLinearColor::Red);
+
+            // Subtle pulse effect using a Sine wave
+            float Pulse = FMath::Sin(GetWorld()->GetTimeSeconds() * 15.0f) * 0.2f + 0.8f;
+            ChoiceTimerBar->SetRenderOpacity(Pulse);
+        }
+        else
+        {
+            ChoiceTimerBar->SetFillColorAndOpacity(FLinearColor::White);
+            ChoiceTimerBar->SetRenderOpacity(1.0f);
+        }
+
+        if (Percent <= 0.0f) bIsTimerActive = false;
     }
 }
 

@@ -11,6 +11,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnDialogueUpdated, UDialogueNode*,
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDialogueFinished);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnQTETriggered, FName, Input, float, Duration);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDialogueVisibilityChanged, bool, bIsVisible);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDialogueTimerStarted, float, Duration);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDialogueTimerFinished);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SILENT_PARTNER_API UDialogueManagerComponent : public UActorComponent
@@ -55,6 +57,14 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Dialogue")
 	FOnDialogueVisibilityChanged OnDialogueVisibilityChanged;
+
+	// Broadcasts when a timed dialogue choice begins counting down
+	UPROPERTY(BlueprintAssignable, Category = "Dialogue|Events")
+	FOnDialogueTimerStarted OnDialogueTimerStarted;
+
+	// Broadcasts when the time limit for a dialogue choice has expired 
+	UPROPERTY(BlueprintAssignable, Category = "Dialogue|Events")
+	FOnDialogueTimerFinished OnDialogueTimerFinished;
 
 	UPROPERTY(BlueprintAssignable)
 	FOnQTETriggered OnQTETriggered;

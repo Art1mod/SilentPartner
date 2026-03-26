@@ -36,4 +36,11 @@ private:
     
     UFUNCTION()
     void RefreshDialogueUI(UDialogueNode* CurrentNode, const TArray<FDialogueChoice>& VisibleChoices);
+
+    // The function that reacts to a player chosing a dialogue option
+    UFUNCTION()
+    void HandleTimerStarted(float Duration);
+
+    UFUNCTION()
+    void HandleTimerFinished();
 };

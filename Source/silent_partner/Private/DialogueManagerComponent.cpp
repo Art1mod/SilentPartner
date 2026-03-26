@@ -57,7 +57,8 @@ void UDialogueManagerComponent::StartDialogue(UDialogueNode* NewNode)
 		false
 	);
 
-	// 4. Tell the UI to display the new text and buttons
+	// 4. Tell the UI to display the new text, buttons, and the timer
+	OnDialogueTimerStarted.Broadcast(CurrentNode->TimerDuration);
 	OnDialogueVisibilityChanged.Broadcast(true);
 	OnDialogueUpdated.Broadcast(CurrentNode, AvailableChoices);
 }
@@ -65,6 +66,9 @@ void UDialogueManagerComponent::StartDialogue(UDialogueNode* NewNode)
 void UDialogueManagerComponent::OnChoiceSelected(int32 ChoiceIndex)
 {
 	GetWorld()->GetTimerManager().ClearTimer(TimerHandle_Dialogue);
+	
+	// Tell the UI to reset the timer
+	OnDialogueTimerFinished.Broadcast();
 
 	if (!AvailableChoices.IsValidIndex(ChoiceIndex)) return;
 
@@ -78,13 +82,16 @@ void UDialogueManagerComponent::OnChoiceSelected(int32 ChoiceIndex)
 		}
 	}
 	
-	if (!SelectedChoice.NextNode.IsNull()) 
+	// Transition
+	if (!SelectedChoice.NextNode.IsNull())
 	{
-		// Load and move to the next part of the story
 		StartDialogue(SelectedChoice.NextNode.LoadSynchronous());
 	}
-	
-	// If NextNode is null and an "End" action was fired, the dialogue simply stops
+	else
+	{
+		// If there's no next node, the dialogue is over
+		EndDialogue();
+	}
 }
 
 void UDialogueManagerComponent::EndDialogue()
@@ -129,11 +136,33 @@ bool UDialogueManagerComponent::HasClue(FGameplayTag ClueTag) const
 
 void UDialogueManagerComponent::OnTimerExpired()
 {
-	if (CurrentNode && CurrentNode->DefaultTimeoutNode.IsValid()) 
+	if (!CurrentNode) return;
+
+	// 1. Tell the HUD/Widget to hide the timer bar immediately
+	OnDialogueTimerFinished.Broadcast();
+
+	// 2. Execute Timeout Actions (e.g., "Ben thinks you're hiding something")
+	for (UDialogueAction* Action : CurrentNode->OnTimeoutActions)
 	{
-		// Force the "Negative/Silent" outcome
-		UDialogueNode* DefaultTimeoutNode = CurrentNode->DefaultTimeoutNode.LoadSynchronous();
-		StartDialogue(DefaultTimeoutNode);
+		if (Action)
+		{
+			Action->ExecuteAction(this);
+		}
+	}
+
+	// 3. Transition to the "Failure/Silence" Node
+	if (!CurrentNode->DefaultTimeoutNode.IsNull())
+	{
+		UDialogueNode* TimeoutNode = CurrentNode->DefaultTimeoutNode.LoadSynchronous();
+		if (TimeoutNode)
+		{
+			StartDialogue(TimeoutNode);
+		}
+	}
+	else
+	{
+		// If no timeout node is specified, we treat silence as "End of Conversation"
+		EndDialogue();
 	}
 }
 

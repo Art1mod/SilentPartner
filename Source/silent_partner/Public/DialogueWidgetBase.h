@@ -25,6 +25,9 @@ public:
     UPROPERTY(meta = (BindWidget))
     class UVerticalBox* ChoiceContainer;
 
+    UPROPERTY(meta = (BindWidget))
+    class UProgressBar* ChoiceTimerBar;
+
     // A delegate to notify of selected choice
     UPROPERTY(BlueprintCallable, Category = "Dialogue|Events")
     FOnChoiceSelected OnChoiceSelected;
@@ -40,6 +43,12 @@ public:
     UFUNCTION(Category = "UI")
     void UpdateChoices(const TArray<FDialogueChoice>& Choices);
 
+    UFUNCTION()
+    void StartVisualTimer(float Duration);
+
+    UFUNCTION()
+    void StopVisualTimer();
+
 protected:
     UPROPERTY(EditAnywhere, Category = "Dialogue")
     TSubclassOf<class UDialogueButtonBase> ChoiceButtonClass;
@@ -47,7 +56,14 @@ protected:
     UPROPERTY(EditAnywhere, Category = "Dialogue|Setup")
     int32 PoolChunkSize = 4;
 
+    virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+
 private:
+
+    float TotalTimerDuration = 0.0f;
+    float ElapsedTimerTime = 0.0f;
+    bool bIsTimerActive = false;
+
     // The actual "Pool" of widgets
     UPROPERTY()
     TArray<TObjectPtr<UDialogueButtonBase>> ButtonPool;
