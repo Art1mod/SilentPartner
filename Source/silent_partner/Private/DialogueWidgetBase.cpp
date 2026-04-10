@@ -33,6 +33,9 @@ void UDialogueWidgetBase::UpdateChoices(const TArray<FDialogueChoice>& Choices)
             Button->SetVisibility(ESlateVisibility::Visible);
             Button->ChoiceID = i;
             Button->OnSetupButton(Choices[i].ChoiceLabel);
+            
+            //Playing unlock anim for choices that were recently locked 
+            if (Choices[i].bPlayUnlockAnim) Button->PlayChoiceUnlock();
         }
         else
         {

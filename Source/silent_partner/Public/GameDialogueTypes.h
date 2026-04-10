@@ -37,7 +37,10 @@ struct FDialogueChoice
 
     // The "Unlock" requirement (Leave empty for always available)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FGameplayTag UnlockRequirement; 
+    FGameplayTag UnlockRequirement{ FGameplayTag::EmptyTag };
+
+    UPROPERTY()
+    bool bPlayUnlockAnim {false};
 
     
     //The writer can add "End Dialogue", "Start QTE", etc. here

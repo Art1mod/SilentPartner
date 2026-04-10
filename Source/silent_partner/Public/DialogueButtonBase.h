@@ -25,6 +25,10 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Dialogue")
 	void OnSetupButton(const FText& InLabel);
 
+	// A Blueprint event to trigger animations (Fade in/out)
+	UFUNCTION(BlueprintImplementableEvent, Category = "UI")
+	void PlayChoiceUnlock();
+
 protected:
 	
 	UFUNCTION(BlueprintCallable, Category = "Dialogue")

@@ -40,10 +40,17 @@ void UDialogueManagerComponent::StartDialogue(UDialogueNode* NewNode)
 	AvailableChoices.Empty();
 
 	// 2. Filter choices: Only show what the player "knows"
-	for (const FDialogueChoice& Choice: CurrentNode->Choices) 
+	for (FDialogueChoice& Choice: CurrentNode->Choices) 
 	{
 		if (!Choice.UnlockRequirement.IsValid() || FoundClues.HasTag(Choice.UnlockRequirement))
 		{
+			if (Choice.UnlockRequirement.IsValid())
+			{
+				//Telling to play UnlockAnim if the choice contain an UnlockRequirement 
+				Choice.bPlayUnlockAnim = true;
+			}
+			
+
 			AvailableChoices.Add(Choice);
 		}
 	}
