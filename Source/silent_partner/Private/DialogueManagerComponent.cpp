@@ -40,18 +40,26 @@ void UDialogueManagerComponent::StartDialogue(UDialogueNode* NewNode)
 	AvailableChoices.Empty();
 
 	// 2. Filter choices: Only show what the player "knows"
-	for (FDialogueChoice& Choice: CurrentNode->Choices) 
+	for (const FDialogueChoice& AssetChoice : CurrentNode->Choices)
 	{
-		if (!Choice.UnlockRequirement.IsValid() || FoundClues.HasTag(Choice.UnlockRequirement))
-		{
-			if (Choice.UnlockRequirement.IsValid())
-			{
-				//Telling to play UnlockAnim if the choice contain an UnlockRequirement 
-				Choice.bPlayUnlockAnim = true;
-			}
-			
 
-			AvailableChoices.Add(Choice);
+		// Check if the player meets the requirement
+		const bool bHasRequirement = !AssetChoice.UnlockRequirement.IsValid()
+			|| FoundClues.HasTag(AssetChoice.UnlockRequirement);
+
+		if (bHasRequirement)
+		{
+			// We create a local copy of the choice to modify it safely
+			FDialogueChoice ChoiceInstance = AssetChoice;
+
+			if (AssetChoice.UnlockRequirement.IsValid())
+			{
+				// This only affects local 'AvailableChoices' array, 
+				// leaving the original Data Asset clean for the next playthrough.
+				ChoiceInstance.bPlayUnlockAnim = true;
+			}
+
+			AvailableChoices.Add(ChoiceInstance);
 		}
 	}
 
